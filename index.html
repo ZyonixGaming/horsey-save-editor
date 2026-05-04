@@ -103,9 +103,6 @@
                 flex-wrap: wrap;
 				width: 100%;
             }
-            .spread {
-                justify-content: space-between;
-            }
             input,
             select,
             button,
@@ -233,17 +230,6 @@
             .derived {
                 color: var(--muted);
             }
-            .section-row {
-                display: grid;
-                grid-template-columns: 150px 120px 110px 1fr;
-                gap: 10px;
-                align-items: center;
-                padding: 9px 10px;
-                border-bottom: 1px solid var(--border);
-            }
-            .section-row:last-child {
-                border-bottom: 0;
-            }
             .hex {
                 white-space: pre-wrap;
                 word-break: break-word;
@@ -279,181 +265,21 @@
                 cursor: pointer;
                 font-weight: 700;
             }
-            .dna-table {
-                display: flex;
-                flex-direction: column;
-                gap: 6px;
-                margin-top: 10px;
-            }
-            .dna-row {
-                display: grid;
-                grid-template-columns: 70px repeat(16, minmax(34px, 1fr));
-                gap: 4px;
-                align-items: center;
-            }
-            .dna-off {
-                font-size: 11px;
-                color: var(--muted);
-            }
-            .dna-byte {
-                width: 100%;
-                min-width: 32px;
-                text-align: center;
-                padding: 5px 2px;
-                border-radius: 8px;
-                font-family:
-                    "Fira Code", "Cascadia Code", ui-monospace, SFMono-Regular,
-                    Menlo, Consolas, monospace;
-                text-transform: lowercase;
-            }
-            .dna-byte.changed {
-                border-color: var(--warn);
-                box-shadow: 0 0 0 1px #eab30855;
-            }
-            .adjacent-grid {
-                display: grid;
-                grid-template-columns: repeat(8, minmax(44px, 1fr));
-                gap: 6px;
-            }
 
-            .mapped-dna-editor {
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-            }
-            .dna-toolbar {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                gap: 10px;
-                border: 1px solid var(--border);
-                background: #172030;
-                border-radius: 14px;
-                padding: 10px;
-            }
-            .dna-legend {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-            .helix-grid {
-                display: grid;
-                gap: 12px;
-            }
-            .helix {
-                border: 1px solid var(--border);
-                background: #111827;
-                border-radius: 16px;
-                overflow: hidden;
-            }
-            .helix-head {
-                padding: 10px 12px;
-                background: var(--panel2);
-                border-bottom: 1px solid var(--border);
-                display: flex;
-                justify-content: space-between;
-                gap: 10px;
-                align-items: center;
-            }
-            .helix-title {
-                font-weight: 800;
-                font-family:
-                    "Fira Code", "Cascadia Code", ui-monospace, SFMono-Regular,
-                    Menlo, Consolas, monospace;
-            }
-            .strands {
-                padding: 12px;
-                display: grid;
-                gap: 8px;
-                overflow-x: auto;
-            }
-            .strand {
-                display: grid;
-                grid-template-columns: 42px max-content;
-                gap: 10px;
-                align-items: center;
-            }
-            .strand-label {
-                color: var(--muted);
-                font-family:
-                    "Fira Code", "Cascadia Code", ui-monospace, SFMono-Regular,
-                    Menlo, Consolas, monospace;
-                font-size: 12px;
-            }
-            .bases {
-                display: flex;
-                gap: 5px;
-            }
-            .base {
-                width: 32px;
-                height: 32px;
-                border-radius: 10px;
-                border: 1px solid var(--border);
-                background: #111827;
-                font-family:
-                    "Fira Code", "Cascadia Code", ui-monospace, SFMono-Regular,
-                    Menlo, Consolas, monospace;
-                font-weight: 800;
-                color: var(--text);
-                display: inline-grid;
-                place-items: center;
-                padding: 0;
-            }
-            .base:hover:not(:disabled) {
-                border-color: var(--accent);
-                background: #1c2a3d;
-            }
-            .base.changed {
-                color: var(--warn);
-                border-color: #eab308aa;
-                box-shadow: inset 0 0 0 1px #eab30833;
-            }
-            .base.unresolved {
-                color: var(--bad);
-                border-color: #f43f5e66;
-            }
-            .base:disabled {
-                opacity: 0.6;
-                cursor: not-allowed;
-            }
-            .raw-wrap {
-                max-height: 420px;
-                overflow: auto;
-                border: 1px solid var(--border);
-                border-radius: 14px;
-            }
-            .raw-table {
-                width: 100%;
-                border-collapse: collapse;
-                font-family:
-                    "Fira Code", "Cascadia Code", ui-monospace, SFMono-Regular,
-                    Menlo, Consolas, monospace;
-                font-size: 12px;
-            }
-            .raw-table th,
-            .raw-table td {
-                border-bottom: 1px solid var(--border);
-                padding: 7px 8px;
-                text-align: left;
-                white-space: nowrap;
-            }
-            .raw-table th {
-                color: var(--muted);
-                background: var(--panel2);
-                position: sticky;
-                top: 0;
-            }
-            .raw-table tr.changed td {
-                color: var(--warn);
-            }
+
+
+
+
+
+
+
+
+
+
+
 
             /* In-game DNA editor merged from the C.R.I.S.P.R editor. */
             .game-dna-editor {
-                --A: #facc15;
-                --T: #fb7185;
-                --C: #60a5fa;
-                --G: #4ade80;
                 --inverse-text: #181b22;
                 --accent-soft: rgba(56, 189, 248, 0.16);
                 --accent-ring-strong: rgba(125, 211, 252, 0.62);
@@ -461,7 +287,6 @@
                 --red-lo: #fca5a5;
                 --warn-soft: #fde68a;
                 --dim: #748297;
-                --chip-label: #c8d3df;
                 --gene-card-bg: #202733;
                 --tooltip-bg: #161d26;
                 display: grid;
@@ -491,131 +316,7 @@
                 flex-wrap: wrap;
             }
 
-            .game-helix-title {
-                font-weight: 800;
-                font-size: 14px;
-                letter-spacing: 0.01em;
-                line-height: 1.25;
-            }
-            .game-helix-subtitle {
-                color: var(--soft);
-                font-size: 12px;
-                font-weight: 600;
-                opacity: 0.92;
-            }
 
-            .game-strand-stack {
-                display: flex;
-                flex-direction: column;
-                gap: 6px;
-                align-items: flex-end;
-                justify-content: center;
-                flex: 0 0 auto;
-                max-width: 58%;
-            }
-            .game-strand-row {
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-                gap: 6px;
-                flex-wrap: nowrap;
-                min-height: 22px;
-            }
-            .game-strand-label {
-                color: var(--chip-label);
-                font-size: 10px;
-                font-weight: 800;
-                width: 24px;
-                flex: 0 0 24px;
-                text-align: right;
-                letter-spacing: 0.06em;
-            }
-
-            .game-rpos {
-                color: var(--dim);
-                font-size: 10px;
-                font-weight: 600;
-                margin-top: 3px;
-            }
-            .game-rname {
-                font-size: 12px;
-                font-weight: 800;
-                margin: 0 0 2px;
-                letter-spacing: 0.02em;
-                line-height: 1.3;
-            }
-            .game-rval {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-                font-size: 11px;
-                margin-top: 8px;
-            }
-            .game-allele-line {
-                display: flex;
-                align-items: center;
-                gap: 4px;
-                flex-wrap: wrap;
-            }
-            .game-gene-mixed-row {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 8px;
-                margin-top: 8px;
-                width: 100%;
-            }
-            .game-gene-warning {
-                color: var(--warn-soft);
-                font-size: 10px;
-                font-weight: 700;
-                letter-spacing: 0.03em;
-            }
-            .game-gene-tooltip {
-                position: absolute;
-                left: 0;
-                top: calc(100% + 8px);
-                z-index: 21;
-                width: min(360px, 65vw);
-                padding: 10px 12px;
-                background: var(--tooltip-bg);
-                color: var(--text);
-                border: 1px solid var(--accent);
-                border-radius: 12px;
-                box-shadow: 0 16px 32px rgba(0, 0, 0, 0.38);
-                font-size: 12px;
-                line-height: 1.6;
-                display: none;
-                white-space: normal;
-                pointer-events: none;
-            }
-            .game-gene-tooltip::before {
-                content: "";
-                position: absolute;
-                top: -5px;
-                left: 16px;
-                width: 8px;
-                height: 8px;
-                background: var(--tooltip-bg);
-                border-left: 1px solid var(--accent);
-                border-top: 1px solid var(--accent);
-                transform: rotate(45deg);
-            }
-            .game-tooltip-code {
-                display: block;
-                color: var(--accent);
-                font-weight: 800;
-                font-size: 11px;
-                margin-bottom: 6px;
-                letter-spacing: 0.04em;
-            }
-            .game-tooltip-values {
-                display: block;
-                color: var(--soft);
-                font-size: 11px;
-                margin-top: 6px;
-            }
 
             .game-base {
                 display: inline-flex;
@@ -648,54 +349,9 @@
                 height: 22px;
                 font-size: 11px;
             }
-            .game-editable-base {
-                cursor: pointer;
-                border: 0;
-                padding: 0;
-                box-shadow: inset 0 0 0 1px transparent;
-                transition:
-                    transform 0.08s ease,
-                    box-shadow 0.08s ease;
-            }
-            .game-editable-base:hover,
-            .game-editable-base:focus-visible {
-                transform: translateY(-1px);
-                box-shadow:
-                    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
-                    0 0 0 2px var(--accent-ring-strong);
-                outline: none;
-            }
-            .game-btn-mini {
-                padding: 5px 8px;
-                font-size: 11px;
-                border-radius: 8px;
-                background: transparent;
-                border: 1px solid var(--warn);
-                color: var(--warn-soft);
-                box-shadow: none;
-            }
-            .game-dim {
-                color: var(--dim);
-            }
+
             .game-muted {
                 color: var(--muted);
-            }
-            @media (max-width: 720px) {
-
-                .game-strand-stack {
-                    align-items: flex-start;
-                    max-width: 100%;
-                    width: 100%;
-                }
-                .game-strand-row {
-                    flex-wrap: wrap;
-                    justify-content: flex-start;
-                }
-                .game-strand-label {
-                    width: auto;
-                    flex-basis: 100%;
-                    text-align: left;
-                }
             }
 
             @media (max-width: 1000px) {
@@ -703,10 +359,6 @@
                     grid-template-columns: 1fr;
                 }
                 .prop {
-                    grid-template-columns: 1fr;
-                }
-                .grid2,
-                .grid3 {
                     grid-template-columns: 1fr;
                 }
             }
@@ -1808,20 +1460,6 @@
                 }
 
 
-                function valueColor(v) {
-                    if (v == null) return "var(--muted)";
-                    if (v > 0) return "var(--green-hi)";
-                    if (v < 0) return "var(--red-lo)";
-                    return "var(--muted)";
-                }
-                function getGeneValue(gene, base) {
-                    if (
-                        !gene ||
-                        !Object.prototype.hasOwnProperty.call(BASE_INDEX, base)
-                    )
-                        return null;
-                    return gene.g[BASE_INDEX[base]];
-                }
 
                 function getHelixIndexFactory() {
                     const m = new Map();
@@ -1922,36 +1560,14 @@
                 }
 
 
-                function chip(base, size = "sm") {
-                    return BASES.includes(base)
-                        ? `<span class="game-base game-base-${base} game-base-${size}">${base}</span>`
-                        : '<span class="game-muted">?</span>';
-                }
-                function editableBase(base, onActivate, label) {
-                    const b = createElement("button", {
-                        type: "button",
-                        class: `game-base game-base-${base} game-base-sm game-editable-base`,
-                        title: label,
-                        "aria-label": label,
-                        text: base,
-                    });
-                    b.addEventListener("click", (e) => {
-                        e.stopPropagation();
-                        onActivate();
-                    });
-                    return b;
-                }
+
                 return {
                     HELIX_COUNT,
                     BASES,
                     BASE_INDEX,
                     createElement,
                     sanitizeSequence,
-                    normalizeGenome,
-                    chip,
-                    editableBase,
-                    valueColor,
-                    getGeneValue,
+                    normalizeGenome,                    
                     parseGenome,
                     formatGenomeForExport,
                 };
@@ -2133,7 +1749,7 @@
                 tableEnd = off;                
 				findDnaRuns();
             }
-
+			/*
             function isLikelyHorse(r) {
                 const pA = view.getInt32(r.fixedOffset + 6, true);
                 const pB = view.getInt32(r.fixedOffset + 10, true);
@@ -2152,7 +1768,7 @@
                     return true;
                 return false;
             }
-			
+			*/
 			function hasGenome(r) {
 				if(r.detail_off) return true;
 				return false;
@@ -2163,7 +1779,7 @@
                 const n = records[idx].name || "(blank)";
                 return `${n} #${idx}`;
             }
-
+			/*
             function allOccurrencesU32(value, start = 0) {
                 const b0 = value & 255,
                     b1 = (value >>> 8) & 255,
@@ -2181,14 +1797,14 @@
                 }
                 return hits;
             }
-
+			*/
 			
             function findHorseDetailBlocks(idx) {
                 if (!original) return [];
 				if (idx<11) return [];
 				const off=records[idx].detail_off;
 				if(!off) return [];
-                const hits = allOccurrencesU32(idx >>> 0, tableEnd);
+                //const hits = allOccurrencesU32(idx >>> 0, tableEnd);
 				const detailBlocks = [];
 				
 				const age =
@@ -2260,6 +1876,9 @@
 								}
 								*/
 								if(!records[tempindex].detail_off){
+									if(selectedIndex<0||selectedIndex>tempindex){
+										selectedIndex=tempindex;
+									}
 									records[tempindex].detail_off=j+8;
 								}
 															
@@ -2365,7 +1984,7 @@
                 const q = $("search").value.trim().toLowerCase();
                 const filter = $("filter").value;
                 let rows = records;
-                if (filter === "horses") rows = rows.filter(isLikelyHorse);
+                //if (filter === "horses") rows = rows.filter(isLikelyHorse);
 				if (filter === "hasgenome") rows = rows.filter(hasGenome);
                 if (filter === "named")
                     rows = rows.filter((r) => r.name.length);
@@ -2753,7 +2372,7 @@
 							
 							const rawIndex=GENOME_MAP[i][j];
                             if (rawIndex === null) {
-                                failures.push(`${slot}: no raw index`);
+                                failures.push(`${i}:${j} no raw index`);
                                 continue;
                             }							
 							const entry=BYTE_MAP[rawIndex];
@@ -2766,7 +2385,7 @@
 							const nextByte = pairToByte(rawIndex, pair);
 							if (nextByte === null) {
 								failures.push(
-									`${slot} raw[${rawIndex}] cannot encode ${pair}`,
+									`${i}:${j} raw[${rawIndex}] cannot encode ${pair}`,
 								);
 							}else{
 								writeByteSilently(genomeStart + rawIndex, nextByte);	
@@ -3024,13 +2643,6 @@
                 selectedIndex = -1;
                 try {
                     parseSave();
-                    const test = records.find((r) => r.name === "TEST HORSE");
-                    const val = records.find((r) => r.name === "Valedictorian");
-                    selectedIndex = test
-                        ? test.idx
-                        : val
-                          ? val.idx
-                          : records.findIndex(isLikelyHorse);
                     renderAll();
                 } catch (e) {
                     original = null;
