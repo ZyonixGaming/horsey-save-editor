@@ -1857,7 +1857,7 @@
                     }
                     let j = i;
 					
-                    while (j < original.length && codeSet.has(original[j])) j++;
+                    while (j < original.length && codeSet.has(original[j])&& (j-i+1<=240)) j++;
                     const len = j - i;
                     if (len >= 240) {
 
@@ -1875,18 +1875,32 @@
 									console.log("length: "+len+", start: "+i+", end: "+j+", k: "+k+ ", idx: "+tempindex);
 								}
 								*/
+								records[tempindex].detail_off=j+8;
+								/*
 								if(!records[tempindex].detail_off){
+									
 									if(selectedIndex<0||selectedIndex>tempindex){
 										selectedIndex=tempindex;
 									}
+									
 									records[tempindex].detail_off=j+8;
+
+								}else{
+									//console.log("repeat: "+tempindex+": " + records[tempindex].detail_off +" and "+ (j+8));
 								}
-															
-								break;
+								*/					
+								//break;
+								i = j+54;
+							}else{
+								i= j;
 							}
 						}
-                    }
-                    i = j;
+						
+                    }else{
+						i = j;
+					}
+                    //i = j;
+					
                 }
                 
             }
