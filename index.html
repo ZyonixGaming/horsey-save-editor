@@ -42,7 +42,7 @@
                                 disabled=""
                                 id="clearPatchesBtn"
                             >
-                                Clear Patches
+                                Reset Changes
                             </button>
                         </div>
                         <div class="small" id="summary">
@@ -65,7 +65,7 @@
                             type="text"
                         />
                         <select id="filter">
-							<option value="hasgenome">Has genome</option>
+							<option value="hasgenome">Has data</option>
 							<option value="hasitem">Has item</option>
 							<option value="istired">Is tired</option>
                             <option value="named">Named records</option>														
@@ -87,7 +87,7 @@
                 <section class="card">
                     <div class="hd">
                         <h2 id="selectedTitle">No horse selected</h2>
-                        <span class="pill" id="selectedMeta">—</span>
+                        <!--<span class="pill" id="selectedMeta">—</span>-->
                     </div>
                     <div class="bd stack">
                         <div class="prop-list" id="horseProps"></div>
@@ -95,6 +95,7 @@
                         <div id="detailBlocks"></div>
                     </div>
                 </section>
+				<!--
                 <section class="card">
                     <div class="hd">
                         <h2>Patch list</h2>
@@ -104,6 +105,7 @@
                         <div class="hex" id="patchList">No changes yet.</div>
                     </div>
                 </section>
+				-->
             </section>
         </main>
 		<script src="byte-map.js"></script>
@@ -359,10 +361,52 @@
 			].map(line =>			  
 			  line.match(/.{1,2}/g).map(h => parseInt(h, 16))
 			);
-			
-			
+/*			
+const makeCRCTable = () => {
+    let c;
+    const crcTable = [];
+    for (let n = 0; n < 256; n++) {
+        c = n;
+        for (let k = 0; k < 8; k++) {
+            c = ((c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
+			//c = ((c & 1) ? (0x82F63B78 ^ (c >>> 1)) : (c >>> 1));
+			//c = ((c & 1) ? (0x741B8CD7 ^ (c >>> 1)) : (c >>> 1));
+        }
+        crcTable[n] = c;
+    }
+    return crcTable;
+};
 
+const crc32 = (bytes) => {
+    const crcTable = window.crcTable || (window.crcTable = makeCRCTable());
+    let crc = 0 ^ (-1);
 
+    for (let i = 0; i < bytes.length; i++) {
+        crc = (crc >>> 8) ^ crcTable[(crc ^ bytes[i]) & 0xFF];
+    }
+
+    return (crc ^ (-1)) >>> 0; // Return unsigned 32-bit integer
+};		
+	
+function crc32Slice(offset = 0, length = 240) {
+	const crcTable = window.crcTable || (window.crcTable = makeCRCTable());
+    let crc = 0 ^ (-1);
+    const end = offset + length;
+
+    // Bounds check validation
+    if (end > original.length || offset < 0) {
+        throw new RangeError("Offset or length out of buffer bounds");
+    }
+
+    for (let i = offset; i < end; i++) {
+		const byteVal = patches.has(i) ? patches.get(i) : original[i];
+	
+        crc = (crc >>> 8) ^ crcTable[(crc ^ byteVal) & 0xFF];
+    }
+
+    return (crc ^ (-1)) >>> 0;
+}
+*/
             function pairToByte(rawIndex, pair) {
                 const entry = BYTE_MAP[rawIndex];
                 if (!entry || !entry.n) return null;
@@ -422,6 +466,7 @@
                 else patches.set(off, value);
                 renderPatchState();
             }
+				
             function setU32(off, value) {
                 value = Number(value) >>> 0;
                 for (let i = 0; i < 4; i++)
@@ -820,9 +865,9 @@
                     const pB = getI32Patched(r.fixedOffset + 10);
                     div.innerHTML =
                         `<div class="name">${r.name || "(blank)"} <span class="small">#${r.idx}</span></div>` +
-                        `<div class="small mono">${hex(r.offset)} · fixed ${hex(r.fixedOffset)}</div>` +
-                        `<div class="small">flags ${flags} · races ${total} · regular ${regular} · sumo ${sumo}</div>` +
-                        `<div class="small">parents: ${pA >= 0 ? recordName(pA) : "none"} / ${pB >= 0 ? recordName(pB) : "none"} · offspring ${r.links.length}</div>`;
+                      //  `<div class="small mono">${hex(r.offset)} · fixed ${hex(r.fixedOffset)}</div>` +
+                        `<div class="small">flags ${flags} · races ${total} · wins ${regular} · sumo ${sumo}</div>` +
+                        `<div class="small">parents: ${pA >= 0 ? recordName(pA) : "none"} / ${pB >= 0 ? recordName(pB) : "none"} · offsprings: ${r.links.length}</div>`;
                     div.addEventListener("click", () => {
                         selectedIndex = r.idx;
                         renderRecords();
@@ -844,13 +889,13 @@
                     selectedIndex >= records.length
                 ) {
                     $("selectedTitle").textContent = "No horse selected";
-                    $("selectedMeta").textContent = "—";
+                 //   $("selectedMeta").textContent = "—";
                     return;
                 }
                 const r = records[selectedIndex];
                 $("selectedTitle").textContent =
                     `${r.name || "(blank)"} #${r.idx}`;
-                $("selectedMeta").textContent = `fixed ${hex(r.fixedOffset)}`;
+               // $("selectedMeta").textContent = `fixed ${hex(r.fixedOffset)}`;
 
                 const fixed0Off = r.fixedOffset;
                 const flags = getByte(fixed0Off);
@@ -884,7 +929,7 @@
 
                 props.appendChild(
                     propRow(
-                        "Ownership group",
+                        "Name color",
                         makeNumberInput(
                             getByte(r.fixedOffset + 1),
                             0,
@@ -895,9 +940,10 @@
                                 renderRecords();
                             },
                         ),
-                        getByte(r.fixedOffset + 1) === 0
-                            ? "Player Group"
-                            : "NPC Group",
+                        //getByte(r.fixedOffset + 1) === 0
+                        //    ? "Player Group"
+                        //    : "NPC Group",
+						""
                     ),
                 );
                 props.appendChild(
@@ -949,7 +995,7 @@
                     ),
                 );
 
-
+				/*
                 const parentAOff = r.fixedOffset + 6;
                 const parentBOff = r.fixedOffset + 10;
                 props.appendChild(
@@ -986,6 +1032,7 @@
                         recordName(getI32Patched(parentBOff)),
                     ),
                 );
+				*/
 
                 const detailBlocks = findHorseDetailBlocks(r.idx);
                 const primaryDetail = detailBlocks.length
@@ -1243,7 +1290,7 @@
 					}					
 				}
 				
-				
+				/*
                 if (primaryDetail && primaryDetail.off + 11 < original.length) {
                     props.appendChild(
                         propRow(
@@ -1262,9 +1309,13 @@
                         ),
                     );
                 }
+				
+				
 
                 const links = document.createElement("div");
                 links.className = "row wrap";
+				
+				
                 if (r.links.length === 0)
                     links.innerHTML = `<span class="small">No offspring links.</span>`;
                 for (const l of r.links) {
@@ -1279,7 +1330,7 @@
                     links.appendChild(b);
                 }
                 props.appendChild(propRow("Offspring", links, null));
-
+				*/
                 renderRawDnaBlock(detailBlocks);
                 renderDetailBlocks(detailBlocks);
 				
@@ -1333,7 +1384,7 @@
                     const box = document.createElement("details");
                     box.open = true;
                     const sum = document.createElement("summary");
-                    sum.textContent = "DNA Editor: no genome block found";
+                    sum.textContent = "DNA: no genome found";
                     box.appendChild(sum);
                     const p = document.createElement("p");
                     p.className = "small";
@@ -1353,7 +1404,7 @@
                 const box = document.createElement("details");
                 box.open = true;
                 const sum = document.createElement("summary");
-                sum.textContent = "DNA Editor";
+                sum.textContent = "DNA";
                 box.appendChild(sum);
 
                 if (
@@ -1372,13 +1423,16 @@
 
 				let genome = readGenome(genomeStart);
 				
+				//console.log(crc32Slice(genomeStart,240).toString(16));
+				
                 const writeByteSilently = (off, value) => {
                     value = Number(value) & 0xff;
                     if (value === original[off]) patches.delete(off);
                     else patches.set(off, value);
                 };
-
+				
                 const applyGenomeToSave = (nextGenome) => {
+					const dnaStatus = document.getElementById("dna-status");
 					let failures = [];
 					let rows = 20;	
 				
@@ -1396,6 +1450,17 @@
 							const p1 = nextGenome[i][0][j];
 							const p2 = nextGenome[i][1][j];
 							const pair = p1+""+p2;
+							if(p1&&p2){
+							}else{
+								failures.push(`${i}:${j} no data`);
+								for (let i = 0; i < genomeLen; i++) patches.delete(genomeStart + i);
+								renderPatchState();
+								//console.log(`Helix ${i}, Pair ${j}: ${rawIndex} ${entry.name} ${pair}`);
+								
+								dnaStatus.textContent ="Invalid DNA"
+								dnaStatus.className= "pill bad";
+								return null;
+							}
 							//console.log(`Helix ${i}, Pair ${j}: ${rawIndex} ${entry.name} ${pair}`);
 							
 							const nextByte = pairToByte(rawIndex, pair);
@@ -1410,22 +1475,25 @@
 						}
 						
 						
-						
+							dnaStatus.textContent ="Valid DNA";
+							dnaStatus.className= "pill good";
 					}
 					
 					
                   
                     renderPatchState();
                     if (failures.length) {
-                        alert(
+                        /*
+						alert(
                             "Some DNA values could not be written:\n" +
                                 failures.slice(0, 12).join("\n") +
                                 (failures.length > 12
                                     ? `\n…${failures.length - 12} more`
                                     : ""),
                         );
+						*/
                     }
-                    renderRawDnaBlock(findHorseDetailBlocks(idx));
+                    //renderRawDnaBlock(findHorseDetailBlocks(idx));
                 };
 
                 const resetSelectedDna = () => {
@@ -1451,12 +1519,15 @@
                 const toolbar = G.createElement("div", {
                     class: "game-dna-toolbar",
                 });
+				
                 toolbar.appendChild(
                     G.createElement("div", { class: "game-dna-legend" }, [
                         G.createElement("span", {
+							id: "dna-status",
                             class: "pill good",
-                            text: "in-game DNA format",
+                            text: "Valid DNA",
                         }),
+						/*
                         G.createElement("span", {
                             class: "pill",
                             text: `detail ${hex(detail)}`,
@@ -1469,8 +1540,10 @@
                             class: "pill",
                             text: `${changedGenomeBytes} DNA byte patch(es)`,
                         }),
+						*/
                     ]),
                 );
+				
                 const actions = G.createElement("div", { class: "row wrap" });
                 toolbar.appendChild(actions);
                 editor.appendChild(toolbar);
@@ -1483,45 +1556,60 @@
                     value: G.formatGenomeForExport(genome),
                     placeholder: "00:TTTTTTTTTT\n00:CCCCCCCCCC",
                 });
+				genomeInput.oninput  = (e) => {
+					applyGenomeToSave(G.parseGenome(genomeInput.value));
+				};				
                 inputWrap.appendChild(genomeInput);
                 editor.appendChild(inputWrap);
 
+/*
                 const analyzeButton = G.createElement("button", {
                     type: "button",
                     class: "secondary",
-                    text: "Analyze / apply genome text",
+                    text: "Apply genome changes",
                 });
+*/				
                 const blankButton = G.createElement("button", {
                     type: "button",
                     class: "secondary",
                     text: "Load blank A genome",
                 });
+				/*
                 const randomButton = G.createElement("button", {
                     type: "button",
                     class: "secondary",
                     text: "Randomize genome",
                 });
-
+				*/
                 const copyButton = G.createElement("button", {
                     type: "button",
                     class: "secondary",
                     text: "Copy Genome",
                 });
+                const pasteButton = G.createElement("button", {
+                    type: "button",
+                    class: "secondary",
+                    text: "Paste Genome",
+                });				
                 const resetButton = G.createElement("button", {
                     type: "button",
                     class: "secondary",
-                    text: "Reset DNA patches",
+                    text: "Reset DNA changes",
                 });
                 actions.append(
-                    analyzeButton,
-                    randomButton,
+                    
+                    //randomButton,
                     copyButton,
+					pasteButton,
+					//analyzeButton,
                     resetButton,
                 );
-
+/*
                 analyzeButton.addEventListener("click", () =>
                     applyGenomeToSave(G.parseGenome(genomeInput.value)),
                 );
+*/				
+				/*
                 randomButton.addEventListener("click", () => {
                     const randomGenome = Array.from(
                         { length: G.HELIX_COUNT },
@@ -1539,6 +1627,7 @@
                     );
                     applyGenomeToSave(randomGenome);
                 });
+				*/
                 copyButton.addEventListener("click", async () => {
                     genomeInput.value = G.formatGenomeForExport(genome);
                     try {
@@ -1558,6 +1647,27 @@
                         );
                     }
                 });
+                pasteButton.addEventListener("click", async () => {
+                    genomeInput.value = G.formatGenomeForExport(genome);
+                    try {
+						const text = await navigator.clipboard.readText();
+						genomeInput.value = text;
+						applyGenomeToSave(G.parseGenome(genomeInput.value));
+                        pasteButton.textContent = "Pasted";
+                        window.setTimeout(
+                            () => (pasteButton.textContent = "Paste Genome"),
+                            1200,
+                        );
+                    } catch {
+                        genomeInput.focus();
+                        genomeInput.select();
+                        pasteButton.textContent = "Select & Paste";
+                        window.setTimeout(
+                            () => (pasteButton.textContent = "Paste Genome"),
+                            1200,
+                        );
+                    }
+                });				
                 resetButton.addEventListener("click", resetSelectedDna);
 
 
@@ -1568,6 +1678,7 @@
             }
 
             function renderDetailBlocks(blocks) {
+				return null;
                 const host = $("detailBlocks");
                 host.innerHTML = "";                
                 const card = document.createElement("details");
@@ -1615,6 +1726,7 @@
   '<span class="mono">' + hex(r.start) + ' (' + r.len + ' bytes) <br>' + formatGenome(readGenome(r.start)) + '</span>'
 ).join(", ")}`;
                         wrap.appendChild(d);
+						
                     }
                     card.appendChild(wrap);
                 });
@@ -1627,12 +1739,15 @@
 
 
             function renderPatchState() {
+				
                 $("downloadBtn").disabled = !original;
                 $("clearPatchesBtn").disabled = !original || patches.size === 0;
-                $("patchCount").textContent = `${patches.size} bytes`;
+                //$("patchCount").textContent = `${patches.size} bytes`;
                 $("patchSummary").textContent = patches.size
-                    ? `${patches.size} byte mutation(s) pending.`
-                    : "No changes pending.";
+                    ? `${patches.size} byte change(s).`
+                    : "No changes.";
+					
+				return null;
                 if (!patches.size) {
                     $("patchList").textContent = "No changes yet.";
                     return;
