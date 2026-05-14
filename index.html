@@ -46,7 +46,9 @@
                             </button>
                         </div>
                         <div class="small" id="summary">
-                            Load a <span class="mono">save1.dat</span> file.
+                            Load a <span class="mono">save1.dat</span> file.<br>
+							It is usually found at:<br>
+							<span class="mono small"><small>C:\Program Files (x86)\Steam\steamapps\common\Horsey Game\save\</small></span>
                         </div>
                         <div class="small" id="patchSummary"></div>
                     </div>
@@ -747,9 +749,14 @@
                 $("summary").innerHTML =
                     `<div>File: <span class="mono">${fileName}</span></div>` +
                     `<div>Size: <span class="mono">${original.length}</span> bytes</div>` +
+					`<div><strong>Remember to backup your save!</strong></div>`;
+					
+					/*
+					
                     `<div>Header count: <span class="mono">${records.length}</span></div>` +
                     `<div>Object table ends at: <span class="mono">${hex(tableEnd)}</span></div>` +
                     `<div>Trailing blob: <span class="mono">${original.length - tableEnd}</span> bytes</div>`;
+					*/
             }
 
             function renderGlobalProps() {
