@@ -7,6 +7,152 @@
         <title>Horsey Save Editor</title>
 		<link rel="stylesheet" href="save-editor.css">
 		<link rel="stylesheet" href="headers.css">
+    <style>
+        /* floating DNA button & side panel */
+        .floating-dna-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 20%, #f0f, #c084fc, #3b82f6);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,200,0.3);
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            backdrop-filter: blur(2px);
+        }
+        .floating-dna-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.6), 0 0 0 4px gold;
+        }
+        .dna-side-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 480px;
+            max-width: 94vw;
+            height: 100vh;
+            background: #0f172ad9;
+            backdrop-filter: blur(16px);
+            background: linear-gradient(135deg, #0b1120ee, #111827ee);
+            border-left: 3px solid #48b5b5;
+            box-shadow: -8px 0 30px rgba(0,0,0,0.6);
+            z-index: 1050;
+            transform: translateX(100%);
+            transition: transform 0.28s cubic-bezier(0.2,0.9,0.4,1.1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 18px;
+            gap: 20px;
+            overflow-y: auto;
+            font-family: 'Segoe UI', system-ui, monospace;
+        }
+        .dna-side-panel.open {
+            transform: translateX(0);
+        }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #48b5b580;
+            padding-bottom: 12px;
+        }
+        .panel-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #a5f3fc, #c084fc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+.close-panel {
+    background: #2d3e44;
+    border: none;
+    color: white;
+    font-size: 1.4rem;
+    border-radius: 40px;
+    width: 34px;
+    height: 34px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+}
+.close-panel:hover { background: #f43f5e; }
+        .gene-box {
+            background: #0a0f1cbb;
+            border-radius: 24px;
+            padding: 16px;
+            border: 1px solid #48b5b5;
+        }
+        .gene-box label {
+            font-weight: bold;
+            color: #b9f3f0;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .gene-textarea {
+            width: 100%;
+            background: #030712;
+            border: 1px solid #2d3a46;
+            border-radius: 18px;
+            color: #cbd5e6;
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            padding: 12px;
+            resize: vertical;
+            min-height: 130px;
+        }
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .mini-btn {
+            background: #1e293b;
+            border: 1px solid #48b5b5;
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #b9c7d9;
+        }
+        .mini-btn:hover { background: #2d3e44; color: white; }
+        .apply-mutate {
+            background: linear-gradient(95deg, #c084fc, #3b82f6);
+            border: none;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 12px;
+            border-radius: 40px;
+            margin-top: 10px;
+            color: #010314;
+            width: 100%;
+            cursor: pointer;
+        }
+        .info-badge {
+            background: #0e1622;
+            border-radius: 28px;
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            color: #9ab3d0;
+            border-left: 4px solid #facc15;
+        }
+    </style>		
     </head>
     <body>
 		<header class="header-bar">
@@ -68,7 +214,10 @@
 							<option value="hasgenome">Has data</option>
 							<option value="hasitem">Has item</option>
 							<option value="istired">Is tired</option>
-                            <option value="named">Named records</option>														
+                            <option value="named">Named records</option>
+							<option value="inMap">On Map</option>
+							<option value="inTruck">In Truck</option>
+							<option value="inOthers">In Other Locations</option>
                             <option value="all">All records</option>
                         </select>
                         <div class="list" id="recordList"></div>
@@ -108,6 +257,28 @@
 				-->
             </section>
         </main>
+
+    <!-- FLOATING DNA BUTTON + SIDE PANEL -->
+    <button class="floating-dna-btn" id="floatingDnaBtn" title="DNA Mutator — wild horses">🧬✨</button>
+    <div id="dnaMutatorPanel" class="dna-side-panel">
+        <div class="panel-header">
+            <h3><span>🧬⚡</span> WILD HORSE MUTAGEN</h3>
+            <button class="close-panel" id="closePanelBtn">✕</button>
+        </div>
+        <div class="info-badge" id="wildHorseCountBadge">🔬 Wild horses on map: --</div>
+        <div class="gene-box">
+            <label>📗 BASE POOL 1</label>
+            <textarea id="genomePoolA" class="gene-textarea" placeholder="00:ACGTGTCAAG&#10;00:ACTTATGAAG&#10;01:GGGGCCCC..."></textarea>
+            <div class="button-row"><button class="mini-btn" id="pastePoolA">📋 Paste</button><button class="mini-btn" id="clearPoolA">🗑 Clear</button></div>
+        </div>
+        <div class="gene-box">
+            <label>📘 BASE POOL 2</label>
+            <textarea id="genomePoolB" class="gene-textarea" placeholder="00:ACGTGTCAAG&#10;00:ACTTATGAAG&#10;01:AAAACCCC..."></textarea>
+            <div class="button-row"><button class="mini-btn" id="pastePoolB">📋 Paste</button><button class="mini-btn" id="clearPoolB">🗑 Clear</button></div>
+        </div>
+        <button id="applyWildMutationBtn" class="apply-mutate">🧬 APPLY DNA TO ALL WILD HORSES 🧬</button>
+        <div class="small" style="text-align:center; opacity:0.7;">Each wild horse gets a unique random mix of available bases per gene.</div>
+    </div>		
 		<script src="byte-map.js"></script>
 		<script src="dna-encoder.js"></script>
         <script>
@@ -273,6 +444,10 @@
             let view = null;
             let fileName = "save1.dat";
             let records = [];
+			let wildHorses = [];
+			let otherHorses = [];
+			let otherDna = [];
+			let locations = [];
             let tableEnd = 0;
             let selectedIndex = -1;
             let patches = new Map();
@@ -488,6 +663,10 @@ function crc32Slice(offset = 0, length = 240) {
 
             function parseSave() {
                 records = [];
+				wildHorses = [];
+				otherHorses = [];
+				otherDna = [];
+				locations = [];
                 if (!original || original.length < 0x14)
                     throw new Error("File too small");
                 const count = u32(0x10);
@@ -582,6 +761,33 @@ function crc32Slice(offset = 0, length = 240) {
 				return false;				
 			}
 			
+			function inMap(r){
+				if(r.location){
+					if(r.location=="Map"){
+						return true;
+					}
+
+				}
+				return false;				
+			}			
+			function inTruck(r){
+				if(r.location){
+					if(r.location=="My Truck"){
+						return true;
+					}
+
+				}
+				return false;				
+			}
+			function inOthers(r){
+				if(r.location){
+					if(r.location!="Map"&&r.location!="My Truck"){
+						return true;
+					}
+
+				}
+				return false;				
+			}
 			
 			function isTired(r){
 				if(r.detail_off){
@@ -680,11 +886,12 @@ function crc32Slice(offset = 0, length = 240) {
             }
 			
             function findDnaRuns() {
-				
-
+				findVariableStrings(original,tableEnd);
+				//let wildHorseCount=0;
 				const codeSet = new Set([9, 10, 11, 12, 17, 18, 19, 20, 25, 26, 27, 28, 33, 34, 35, 36]);				
                 
                 let i = tableEnd;
+				let loc_index=1;
 				//console.log(i + " / " + original.length);
                 while (i < original.length) {
                     if (!codeSet.has(original[i])) {
@@ -704,8 +911,8 @@ function crc32Slice(offset = 0, length = 240) {
 							const b2=original[j+10+k];
 							const b3=original[j+11+k];
 							
-							const tempindex=((b3*256+b2)*256+b1)*256+b0;						
-							if(tempindex>=0&&tempindex<records.length){
+							const tempindex=(((b3*256+b2)*256+b1)*256+b0)|0;						
+							if(tempindex>=-1&&tempindex<records.length){
 								
 /*
 								if(tempindex<=11){
@@ -719,14 +926,40 @@ function crc32Slice(offset = 0, length = 240) {
 									off + 7 < original.length ? getByte(off + 7) : null;
 								const personality =
 									off + 9 < original.length ? getByte(off + 9) : null;	
-								if((age>0||tempindex>10)&&age>=0&&age<=11&&personality>=0&&personality<PERSONALITIES.length&&status>=0&&status<7){
-									if(!records[tempindex].detail_off){
-										records[tempindex].detail_off = [];
+								if((age>0||tempindex<0||tempindex>10)&&age>=0&&age<=11&&personality>=0&&personality<PERSONALITIES.length&&status>=0&&status<7){
+									
+									
+									while(loc_index<locations.length&&locations[loc_index].offset<i){
+									
+										loc_index++;
+									
 									}
-								
-									records[tempindex].detail_off.push(j+8);
-								}									
+									const location = locations[loc_index-1];
+									
+									if (tempindex>=0){
+										if(!records[tempindex].detail_off){
+											records[tempindex].detail_off = [];
+										}
+										records[tempindex].location = location.value;
+										records[tempindex].detail_off.push(j+8);
+										if(location.value=="Map"){
+											wildHorses.push(i);											
+										}										
+									}else{
+										if(location.value=="Map"){
+											wildHorses.push(i);
+											
+										}else{
+											otherHorses.push(i);
+										}
+									}
+								}else{
+									otherDna.push(i);
+								}								
 
+
+							}else{
+								//console.log(tempindex);
 							}
 						}
 						
@@ -734,8 +967,72 @@ function crc32Slice(offset = 0, length = 240) {
                     i = j;
 					
                 }
+				console.log("wild horses: "+wildHorses.length);
+				console.log("other horses: "+otherHorses.length);
+				console.log("other dna: "+otherDna.length);
                 
             }
+			
+			
+/**
+ * Searches a buffer for strings prefixed by a 4-byte length.
+ * @param {Buffer|Uint8Array} buffer - The file buffer to search.
+ * @param {number} startPos - The position to begin the search.
+ * @param {boolean} littleEndian - Byte order of the 4-byte length (default true).
+ */
+function findVariableStrings(buffer, startPos = 0, littleEndian = true) {
+    //const foundStrings = [];
+	locations = [];
+    const view = new DataView(buffer.buffer, buffer.byteOffset, buffer.byteLength);
+
+    // Iterate through each byte where a 4-byte length could still fit
+    for (let i = startPos; i <= buffer.length - 4; i++) {
+        // Read 4 bytes as an unsigned integer (the potential length)
+        const length = view.getUint32(i, littleEndian);
+		const length2 = (i + 8 + length) <= buffer.length ? view.getUint32(i+4+length, littleEndian):-1;
+
+        // Heuristic Check: Is this a plausible string?
+        // 1. Length must be greater than 0.
+        // 2. The string must fit within the remaining buffer space.
+        if (length > 3 && (i + 4 + length) <= buffer.length&&length2>=0&&length2<=1000) {
+            try {
+                // Extract the segment and convert to string
+                const stringBuffer = buffer.slice(i + 4, i + 4 + length);
+                let decodedString = new TextDecoder('utf-8').decode(stringBuffer);
+
+                // Optional: Check if the decoded string contains valid text 
+                // (e.g., no null bytes or control characters)
+                if (/^[\x20-\x7E\s]*$/.test(decodedString)) {
+					
+					if(decodedString=="unknown"){
+						if(locations.length<=10){
+							decodedString = "Map"
+						}else{
+							decodedString = "My Truck"
+						}
+					}
+						
+					locations.push({
+						offset: i,
+						length: length,
+						value: decodedString
+					});
+					
+					// Optimization: Skip past this string to find the next one
+					// Remove this line if strings can overlap or are nested
+					i += (3 + length); 
+				
+                }
+            } catch (e) {
+                // Not a valid UTF-8 string, continue search
+            }
+        }
+    }
+	console.log (locations);
+    return locations;
+}
+
+			
 
 
             function makeNumberInput(
@@ -838,6 +1135,9 @@ function crc32Slice(offset = 0, length = 240) {
                 //if (filter === "horses") rows = rows.filter(isLikelyHorse);
 				if (filter === "hasgenome") rows = rows.filter(hasGenome);
 				if (filter === "hasitem") rows = rows.filter(hasItem);
+				if (filter === "inMap") rows = rows.filter(inMap);
+				if (filter === "inTruck") rows = rows.filter(inTruck);
+				if (filter === "inOthers") rows = rows.filter(inOthers);
 				if (filter === "istired") rows = rows.filter(isTired);
                 if (filter === "named")
                     rows = rows.filter((r) => r.name.length);
@@ -1039,7 +1339,15 @@ function crc32Slice(offset = 0, length = 240) {
                     ? detailBlocks[detailBlocks.length - 1]
                     : null;
 					
-					
+				if (primaryDetail && r.location) {
+                    props.appendChild(
+                        propRow(
+                            "Location",
+                            r.location,
+                            null,
+                        ),
+                    );
+                }
 				
                 if (primaryDetail && primaryDetail.off + 8 < original.length) {
                     props.appendChild(
@@ -1431,7 +1739,10 @@ function crc32Slice(offset = 0, length = 240) {
                     else patches.set(off, value);
                 };
 				
-                const applyGenomeToSave = (nextGenome) => {
+				function applyGenomeToSave(nextGenome){
+					applyGenomeToSaveX(nextGenome,genomeStart);
+				}
+                const applyGenomeToSaveX = (nextGenome,genomeStart) => {
 					const dnaStatus = document.getElementById("dna-status");
 					let failures = [];
 					let rows = 20;	
@@ -1926,6 +2237,10 @@ $("fileInput").addEventListener("click", async () => {
                     original = null;
                     view = null;
                     records = [];
+					wildHorses = [];
+					otherHorses = [];
+					otherDna = [];
+					locations = [];
                     tableEnd = 0;
                     
                     alert("Could not parse save: " + e.message);
@@ -2007,6 +2322,174 @@ $("downloadBtn").addEventListener("click", async () => {
 
             renderAll();
         </script>
+    <script>
+        (function() {
+            // Wait for the original editor to fully load its globals
+            function initMutator() {
+                if (typeof wildHorses === 'undefined' || typeof original === 'undefined') {
+                    setTimeout(initMutator, 200);
+                    return;
+                }
+                // ----- helper: apply full genome array to specific offset -----
+                function applyGenomeToOffset(genomeArray, genomeStart) {
+                    if (!original || genomeStart < tableEnd || genomeStart+240 > original.length) return false;
+                    let ok = true;
+                    for (let i = 0; i < 20; i++) {
+                        const genesThisHelix = GENOME_MAP[i];
+                        const s1 = genomeArray[i]?.[0] || "";
+                        const s2 = genomeArray[i]?.[1] || "";
+                        for (let j = 0; j < genesThisHelix.length; j++) {
+                            const rawIndex = genesThisHelix[j];
+                            const p1 = s1[j], p2 = s2[j];
+                            if (!p1 || !p2 || !"ATCG".includes(p1) || !"ATCG".includes(p2)) { ok = false; continue; }
+                            const newByte = pairToByte(rawIndex, p1+p2);
+                            if (newByte === null) { ok = false; continue; }
+                            setByte(genomeStart + rawIndex, newByte);
+                        }
+                    }
+                    return ok;
+                }
+
+                // parse textarea content into Map<helix, sequence>
+
+                // compute allowed base sets per helix position from both pools
+                function computeAllowedSets(mapA, mapB) {
+                    const allowed = Array(20).fill().map(() => []);
+                    let valid = true;
+                    for (let h = 0; h < 20; h++) {
+                        const expectedLen = GENOME_MAP[h].length;
+                        const seqA = mapA.get(h) || "";
+                        const seqB = mapB.get(h) || "";
+                        for (let pos = 0; pos < expectedLen; pos++) {
+                            const set = new Set();
+                            if (pos < seqA.length && "ATCG".includes(seqA[pos])) set.add(seqA[pos]);
+                            if (pos < seqB.length && "ATCG".includes(seqB[pos])) set.add(seqB[pos]);
+                            if (set.size === 0) valid = false;
+                            allowed[h][pos] = set;
+                        }
+                    }
+                    return { allowed, valid };
+                }
+				
+                function computeAllowedSets2(mapA, mapB) {
+                    const allowed = Array(20).fill().map(() => []);
+                    let valid = true;
+                    for (let h = 0; h < 20; h++) {
+                        const expectedLen = GENOME_MAP[h].length;
+						const pairLenA = mapA[h].length;
+						const pairLenB = mapB[h].length;					                      
+                        for (let pos = 0; pos < expectedLen; pos++) {					
+                            const set = new Set();
+							for (let p = 0; p<pairLenA;p++){
+								const seqA = mapA[h][p] || "";
+								if (pos < seqA.length && "ATCG".includes(seqA[pos])) set.add(seqA[pos]);
+							}
+							for (let p = 0; p<pairLenB;p++){
+								const seqB = mapB[h][p] || "";
+								if (pos < seqB.length && "ATCG".includes(seqB[pos])) set.add(seqB[pos]);
+							}								
+                                                        
+                            if (set.size === 0) valid = false;
+                            allowed[h][pos] = set;
+                        }
+                    }
+                    return { allowed, valid };
+                }				
+
+                // generate random genome from allowed sets
+                function buildRandomGenomeFromPools(allowed) {
+                    const newGenome = Array(20).fill().map(() => ["", ""]);
+                    for (let h = 0; h < 20; h++) {
+                        const helixPosCount = GENOME_MAP[h].length;
+                        let strand1 = "", strand2 = "";
+                        for (let pos = 0; pos < helixPosCount; pos++) {
+                            const allowedSet = allowed[h]?.[pos];
+                            if (!allowedSet || allowedSet.size === 0) return null;
+                            const bases = Array.from(allowedSet);
+                            const randBase1 = bases[Math.floor(Math.random() * bases.length)];
+                            const randBase2 = bases[Math.floor(Math.random() * bases.length)];
+                            strand1 += randBase1;
+                            strand2 += randBase2;
+                        }
+                        newGenome[h] = [strand1, strand2];
+                    }
+                    return newGenome;
+                }
+
+                // apply mutation to all wild horses
+                async function mutateWildHorses() {
+					const G = GAME_DNA;
+                    if (!original) { alert("❌ No save file loaded."); return; }
+                    if (!wildHorses.length) { alert("🐴 No wild horses (on Map) found. Load a save with wild horses."); return; }
+                    const rawA = document.getElementById("genomePoolA").value;
+                    const rawB = document.getElementById("genomePoolB").value;
+					
+					//console.log(G.parseGenome(rawA));
+					//console.log(G.parseGenome(rawB));
+					
+                    //const mapA = parseGenomeMapFromText(rawA);
+                    //const mapB = parseGenomeMapFromText(rawB);
+					
+					//console.log(mapA);
+					//console.log(mapB);
+					
+					
+                    //const { allowed, valid } = computeAllowedSets(mapA, mapB);
+					const { allowed, valid } = computeAllowedSets2(G.parseGenome(rawA), G.parseGenome(rawB));
+                    if (!valid) {
+                        alert("❌ Invalid base pools: some gene position lacks any valid base (A/T/C/G) in both textboxes.\nPlease provide at least one base per gene index.");
+                        return;
+                    }
+                    if (!confirm(`🧬 Mutate ${wildHorses.length} wild horse(s)?\nEach will get a unique random mix of allowed bases. Proceed?`)) return;
+                    let success = 0;
+                    for (let startOffset of wildHorses) {
+                        const randomGenome = buildRandomGenomeFromPools(allowed);
+                        if (randomGenome && applyGenomeToOffset(randomGenome, startOffset)) success++;
+                    }
+                    if (typeof renderPatchState === 'function') renderPatchState();
+                    if (typeof renderSelected === 'function') renderSelected();
+                    alert(`✅ Done! ${success}/${wildHorses.length} wild horses mutated.\nUse "Export Save" to save changes.`);
+                }
+
+                // update badge with current wild horse count
+                function updateBadge() {
+                    const badge = document.getElementById("wildHorseCountBadge");
+                    if (badge && typeof wildHorses !== 'undefined') badge.innerHTML = `🔬 Wild horses on map: ${wildHorses.length}`;
+                }
+
+                // panel UI
+                const panel = document.getElementById("dnaMutatorPanel");
+                const floatingBtn = document.getElementById("floatingDnaBtn");
+                const closeBtn = document.getElementById("closePanelBtn");
+                floatingBtn.onclick = () => { panel.classList.add("open"); updateBadge(); };
+                closeBtn.onclick = () => panel.classList.remove("open");
+                document.addEventListener("click", (e) => {
+                    if (panel.classList.contains("open") && !panel.contains(e.target) && e.target !== floatingBtn && !floatingBtn.contains(e.target))
+                        panel.classList.remove("open");
+                });
+                document.getElementById("pastePoolA").onclick = async () => { try { const t = await navigator.clipboard.readText(); document.getElementById("genomePoolA").value = t; } catch(e) { alert("Failed to paste"); } };
+                document.getElementById("clearPoolA").onclick = () => { document.getElementById("genomePoolA").value = ""; };
+                document.getElementById("pastePoolB").onclick = async () => { try { const t = await navigator.clipboard.readText(); document.getElementById("genomePoolB").value = t; } catch(e) { alert("Failed to paste"); } };
+                document.getElementById("clearPoolB").onclick = () => { document.getElementById("genomePoolB").value = ""; };
+                document.getElementById("applyWildMutationBtn").onclick = mutateWildHorses;
+
+                // set example pools if empty
+                const poolA = document.getElementById("genomePoolA");
+                const poolB = document.getElementById("genomePoolB");
+                //if (!poolA.value) poolA.value = "00:ATCGATCGATCGATCGATCGATCGATCGATCG\n01:GCTAGCTAGCTAGCTAGCTAGCTAGCTAGCTA\n02:ATGCATGCATGCATGCATGCATGCATGCATGC\n03:CGATCGATCGATCGATCGATCGATCGATCGAT";
+                //if (!poolB.value) poolB.value = "00:TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT\n01:CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC\n02:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n03:GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG";
+
+                // refresh badge when file loads (hook into renderAll if available)
+                if (typeof renderAll === 'function') {
+                    const origRenderAll = renderAll;
+                    window.renderAll = function() { origRenderAll(); updateBadge(); };
+                }
+                updateBadge();
+            }
+            initMutator();
+        })();
+    </script>
+	
 		<script src="headers.js"></script>
     </body>
 </html>
